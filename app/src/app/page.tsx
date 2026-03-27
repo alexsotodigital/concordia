@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import html2canvas from 'html2canvas'
 import {
   useAccount,
   useConnect,
@@ -160,11 +161,33 @@ export default function Home() {
     } catch (e) { console.error(e) }
   }
 
+  const cardRef = useRef<HTMLDivElement>(null)
+
   function handleDisconnect() {
     disconnect()
     setScreen('landing')
     setScores(Array(5).fill(null))
     setTxHash(null)
+  }
+
+  async function handleSaveImage() {
+    if (!cardRef.current) return
+    try {
+      const canvas = await html2canvas(cardRef.current, { backgroundColor: '#ffffff', scale: 2 })
+      const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), 'image/png'))
+      // Try native share (mobile save-to-gallery)
+      if (navigator.share && navigator.canShare({ files: [new File([blob], 'concordia.png', { type: 'image/png' })] })) {
+        await navigator.share({ files: [new File([blob], 'concordia.png', { type: 'image/png' })], title: 'Concordia — Mi validación' })
+      } else {
+        // Fallback: download
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'concordia-validacion.png'
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    } catch (e) { console.error(e) }
   }
 
   function handleSwitchWallet() {
@@ -391,6 +414,7 @@ export default function Home() {
               <h2 style={s.screenTitle}>Tu señal fue registrada</h2>
               <p style={{ ...s.subtitle, maxWidth: 260 }}>Formas parte del veredicto colectivo.</p>
 
+              <div ref={cardRef} style={{ width: '100%', backgroundColor: '#fff', borderRadius: 16, padding: '4px 0' }}>
               <div style={s.infoBox}>
                 <div style={s.infoRow}>
                   <span style={s.infoLabel}>Wallet</span>
@@ -413,9 +437,13 @@ export default function Home() {
                 </div>
               </div>
 
-              <div style={s.merch}>🎁 Muestra esta pantalla para recoger merch</div>
+              <div style={{ ...s.merch, marginTop: 0 }}>🎁 Muestra esta pantalla para recoger merch</div>
+              </div>{/* end cardRef */}
             </div>
 
+            <button style={s.saveBtn} onClick={handleSaveImage}>
+              📥 Guardar imagen
+            </button>
             <button style={s.secondaryBtn} onClick={handleDisconnect}>Salir</button>
           </div>
         )}
@@ -490,6 +518,19 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: 16,
     fontWeight: 700,
     cursor: 'pointer',
+    fontFamily: "'Signika', sans-serif",
+  },
+  saveBtn: {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#111',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 14,
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginTop: 12,
     fontFamily: "'Signika', sans-serif",
   },
   secondaryBtn: {
