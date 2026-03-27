@@ -152,6 +152,13 @@ export default function Home() {
     setTxHash(null)
   }
 
+  function handleSwitchWallet() {
+    disconnect()
+    setScores(Array(5).fill(null))
+    // Small delay so wagmi finishes disconnect before re-connecting
+    setTimeout(() => setScreen('connect'), 150)
+  }
+
   const shortAddr = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ''
 
   return (
@@ -269,7 +276,7 @@ export default function Home() {
               </p>
               <p style={{ color: '#bbb', fontSize: 12, fontFamily: 'monospace' }}>{shortAddr}</p>
             </div>
-            <button style={s.secondaryBtn} onClick={handleDisconnect}>
+            <button style={s.secondaryBtn} onClick={handleSwitchWallet}>
               Usar otra wallet
             </button>
           </div>
