@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.28;
 
 contract Concordia {
     string public eventName;
@@ -13,7 +13,7 @@ contract Concordia {
 
     constructor(address demoValidator) {
         eventName = "Monad Blitz CDMX";
-        criteria[0] = "Internet funcionó";
+        criteria[0] = unicode"Internet funcionó";
         criteria[1] = "Espacio de trabajo adecuado";
         criteria[2] = "Comida y bebidas";
         criteria[3] = "Valor para participantes";
@@ -22,7 +22,7 @@ contract Concordia {
         selectedValidators[demoValidator] = true;
     }
 
-    // scores: 0 = Falló, 1 = Cumplió, 2 = Superó
+    // scores: 0 = Fallo, 1 = Cumplio, 2 = Supero
     function submitValidation(uint8[5] calldata scores) external {
         require(selectedValidators[msg.sender], "No elegible");
         require(!hasSubmitted[msg.sender], "Ya enviaste tu validacion");

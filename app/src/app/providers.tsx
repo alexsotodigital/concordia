@@ -3,7 +3,7 @@
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { injected } from 'wagmi/connectors'
-import { monadTestnet } from '@/lib/chain'
+import { monadTestnet } from 'viem/chains'
 
 const config = createConfig({
   chains: [monadTestnet],
