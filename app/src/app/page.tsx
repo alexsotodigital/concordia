@@ -26,15 +26,21 @@ type Screen = 'landing' | 'connect' | 'checking' | 'form' | 'not-eligible' | 'al
 
 // Decorative signal dots — "many sources → one concordia"
 const DOTS = [
-  { top: '6%',  left: '8%',  size: 14, color: '#968CFF', opacity: 0.7 },
-  { top: '10%', left: '72%', size: 9,  color: '#7ED6D1', opacity: 0.6 },
-  { top: '18%', left: '88%', size: 18, color: '#EAC9F8', opacity: 0.5 },
-  { top: '3%',  left: '45%', size: 7,  color: '#6C3BFF', opacity: 0.4 },
-  { top: '28%', left: '5%',  size: 11, color: '#7ED6D1', opacity: 0.55 },
-  { top: '32%', left: '92%', size: 8,  color: '#968CFF', opacity: 0.5 },
-  { top: '15%', left: '28%', size: 5,  color: '#EAC9F8', opacity: 0.6 },
-  { top: '22%', left: '60%', size: 6,  color: '#6C3BFF', opacity: 0.45 },
-  { top: '8%',  left: '55%', size: 10, color: '#7ED6D1', opacity: 0.4 },
+  { top: '5%',  left: '6%',  size: 13, color: '#968CFF', opacity: 0.7 },
+  { top: '9%',  left: '78%', size: 9,  color: '#7ED6D1', opacity: 0.6 },
+  { top: '17%', left: '90%', size: 17, color: '#EAC9F8', opacity: 0.5 },
+  { top: '4%',  left: '44%', size: 7,  color: '#6C3BFF', opacity: 0.4 },
+  { top: '30%', left: '4%',  size: 11, color: '#7ED6D1', opacity: 0.55 },
+  { top: '38%', left: '91%', size: 8,  color: '#968CFF', opacity: 0.5 },
+  { top: '14%', left: '24%', size: 5,  color: '#EAC9F8', opacity: 0.65 },
+  { top: '50%', left: '7%',  size: 14, color: '#6C3BFF', opacity: 0.35 },
+  { top: '55%', left: '86%', size: 10, color: '#7ED6D1', opacity: 0.45 },
+  { top: '65%', left: '3%',  size: 7,  color: '#EAC9F8', opacity: 0.5 },
+  { top: '70%', left: '88%', size: 15, color: '#968CFF', opacity: 0.4 },
+  { top: '78%', left: '10%', size: 9,  color: '#7ED6D1', opacity: 0.5 },
+  { top: '82%', left: '80%', size: 6,  color: '#6C3BFF', opacity: 0.45 },
+  { top: '90%', left: '20%', size: 11, color: '#EAC9F8', opacity: 0.4 },
+  { top: '93%', left: '70%', size: 8,  color: '#968CFF', opacity: 0.55 },
 ]
 
 function SignalDots() {
@@ -180,8 +186,8 @@ export default function Home() {
                 ))}
               </div>
 
-              <p style={{ color: '#555', fontSize: 14, textAlign: 'center', lineHeight: 1.6, maxWidth: 280 }}>
-                Tu opinión sobre este evento quedará registrada para siempre en Monad. Sin intermediarios.
+              <p style={{ color: '#444', fontSize: 14, textAlign: 'center', lineHeight: 1.7, maxWidth: 290, fontWeight: 400 }}>
+                No confíes en el reporte. Confía en quienes estuvieron ahí. Concordia convierte la experiencia de los participantes en una señal verificable para funders.
               </p>
 
               <div style={{ flex: 1 }} />
@@ -189,19 +195,30 @@ export default function Home() {
               <button style={s.cta} onClick={() => setScreen('connect')}>
                 Entrar al evento
               </button>
-              <p style={s.poweredBy}>Powered by Monad Testnet · Chain 10143</p>
+              <p style={s.poweredBy}>Powered by Monad</p>
             </div>
           </div>
         )}
 
         {/* ── CONNECT ─────────────────────────────────────────────── */}
         {screen === 'connect' && (
-          <div style={s.content}>
+          <div style={{ ...s.content, justifyContent: 'space-between' }}>
             <button style={s.backBtn} onClick={() => setScreen('landing')}>← Volver</button>
-            <div style={{ fontSize: 52, marginBottom: 8 }}>🔐</div>
-            <h2 style={s.screenTitle}>Conecta tu wallet</h2>
-            <p style={s.subtitle}>Verificaremos si fuiste seleccionado como validador en esta ronda.</p>
-            <div style={{ flex: 1 }} />
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, flex: 1, justifyContent: 'center' }}>
+              <div style={{ fontSize: 64 }}>🔐</div>
+              <h2 style={{ ...s.screenTitle, fontSize: 26 }}>Conecta tu wallet</h2>
+              <p style={{ ...s.subtitle, fontSize: 16, maxWidth: 270, lineHeight: 1.7 }}>
+                Verificaremos si tu wallet fue seleccionada para validar este evento.
+              </p>
+              <div style={{ width: '100%', backgroundColor: '#F5F0FF', borderRadius: 14, padding: '16px 20px', marginTop: 8 }}>
+                <p style={{ fontSize: 13, color: '#6C3BFF', fontWeight: 700, margin: '0 0 6px' }}>¿Cómo funciona la selección?</p>
+                <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.6 }}>
+                  Los validadores son seleccionados por los organizadores antes del evento. Solo ellos pueden enviar una señal onchain.
+                </p>
+              </div>
+            </div>
+
             <button style={{ ...s.cta, marginBottom: 8 }} onClick={handleConnect}>
               Conectar wallet
             </button>
@@ -383,16 +400,17 @@ const s: Record<string, React.CSSProperties> = {
     overflowY: 'auto',
   },
   wordmark: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: 42,
-    fontWeight: 800,
+    fontFamily: "'Carter One', cursive",
+    fontSize: 40,
+    fontWeight: 400,
     color: '#111',
-    letterSpacing: -1,
-    margin: 0,
+    letterSpacing: 1,
+    margin: '0 24px',
     textAlign: 'center',
+    lineHeight: 1.1,
   },
   screenTitle: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "'Carter One', cursive",
     fontSize: 22,
     fontWeight: 700,
     color: '#111',
