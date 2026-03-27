@@ -23,9 +23,9 @@ Los eventos reciben fondos basados en promesas. No hay forma verificable de sabe
 ## Contrato en Monad Testnet
 
 ```
-Address: 0xB4B0793AcdA9517EC5e566b0e623AaCf5a4c8863
+Address: 0xE879D484f44bab9B520244eF695BE4a555E1aebc
 Deploy Tx: 0x05bcc9503baa31ad6110ad29d327070420ccbf23058bc39dad09499406f2075a
-Explorer: https://testnet.monadscan.com/address/0xB4B0793AcdA9517EC5e566b0e623AaCf5a4c8863
+Explorer: https://testnet.monadscan.com/address/0xE879D484f44bab9B520244eF695BE4a555E1aebc
 ```
 
 ## Cómo correr el proyecto
