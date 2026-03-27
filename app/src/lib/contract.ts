@@ -1,5 +1,5 @@
 // Pega aquí la dirección del contrato después de deployar
-export const CONTRACT_ADDRESS = '0x796deb10427C3C104A7f3E765faBaeF8860bB337' as `0x${string}`
+export const CONTRACT_ADDRESS = '0x0D5729FEa032b506bF7a07fB83Ebd4b19Df3FA30' as `0x${string}`
 
 export const CONTRACT_ABI = [
   {
