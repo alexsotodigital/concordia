@@ -162,40 +162,64 @@ export default function Home() {
         {screen === 'landing' && (
           <div style={{ ...s.content, position: 'relative', overflow: 'hidden' }}>
             <SignalDots />
-            <div style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flex: 1 }}>
-              <div style={{ height: 24 }} />
-              {/* Wordmark */}
+            <div style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+              <div style={{ height: 20 }} />
+
+              {/* Wordmark + badge */}
               <h1 style={s.wordmark}>Concordia</h1>
-              <p style={{ ...s.subtitle, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#999', marginBottom: 8 }}>
-                Validación colectiva
+              <div style={{ marginTop: 10, marginBottom: 20 }}><MonadBadge /></div>
+
+              {/* Tagline */}
+              <p style={{ fontSize: 20, fontWeight: 700, color: '#111', textAlign: 'center', lineHeight: 1.4, margin: '0 8px 8px' }}>
+                No confíes en el reporte.<br />Confía en quienes estuvieron ahí.
               </p>
 
-              {/* Monad badge */}
-              <MonadBadge />
+              {/* Description */}
+              <p style={{ color: '#555', fontSize: 14, textAlign: 'center', lineHeight: 1.7, maxWidth: 280, marginBottom: 20 }}>
+                Concordia convierte la experiencia de los participantes en una señal verificable para funders.
+              </p>
 
-              {/* Signal line decoration */}
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center', margin: '12px 0' }}>
-                {[...Array(9)].map((_, i) => (
-                  <div key={i} style={{
-                    width: i === 4 ? 24 : 6,
-                    height: 3,
-                    borderRadius: 2,
-                    backgroundColor: i === 4 ? '#6C3BFF' : '#D0C8FF',
-                    opacity: i === 4 ? 1 : 0.6,
-                  }} />
+              {/* CTA */}
+              <button style={{ ...s.cta, marginBottom: 10 }} onClick={() => setScreen('connect')}>
+                Entrar al evento
+              </button>
+              <p style={{ fontSize: 12, color: '#999', marginBottom: 28 }}>
+                Solo validadores seleccionados pueden participar
+              </p>
+
+              {/* Divider */}
+              <div style={{ width: '100%', height: 1, backgroundColor: '#F0F0F0', marginBottom: 24 }} />
+
+              {/* How it works */}
+              <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>
+                Cómo funciona
+              </p>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+                {[
+                  { n: '1', text: 'Participas en el evento' },
+                  { n: '2', text: 'Eres seleccionado como validador' },
+                  { n: '3', text: 'Tu señal queda registrada onchain' },
+                ].map(({ n, text }) => (
+                  <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: '50%', backgroundColor: '#F0EDFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#6C3BFF' }}>{n}</span>
+                    </div>
+                    <p style={{ fontSize: 14, color: '#333', margin: 0 }}>{text}</p>
+                  </div>
                 ))}
               </div>
 
-              <p style={{ color: '#444', fontSize: 14, textAlign: 'center', lineHeight: 1.7, maxWidth: 290, fontWeight: 400 }}>
-                No confíes en el reporte. Confía en quienes estuvieron ahí. Concordia convierte la experiencia de los participantes en una señal verificable para funders.
+              {/* Divider */}
+              <div style={{ width: '100%', height: 1, backgroundColor: '#F0F0F0', marginBottom: 20 }} />
+
+              {/* Closing line */}
+              <p style={{ fontSize: 14, color: '#444', textAlign: 'center', lineHeight: 1.6, marginBottom: 8 }}>
+                El resultado no es un reporte.<br />
+                <strong style={{ color: '#6C3BFF' }}>Es un veredicto colectivo.</strong>
               </p>
 
-              <div style={{ flex: 1 }} />
-
-              <button style={s.cta} onClick={() => setScreen('connect')}>
-                Entrar al evento
-              </button>
               <p style={s.poweredBy}>Powered by Monad</p>
+              <div style={{ height: 8 }} />
             </div>
           </div>
         )}
