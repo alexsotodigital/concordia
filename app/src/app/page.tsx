@@ -102,7 +102,7 @@ export default function Home() {
     abi: CONTRACT_ABI,
     functionName: 'selectedValidators',
     args: [address!],
-    query: { enabled: !!address && screen === 'checking' },
+    query: { enabled: !!address },
   })
 
   const { data: alreadySubmitted } = useReadContract({
@@ -110,16 +110,17 @@ export default function Home() {
     abi: CONTRACT_ABI,
     functionName: 'hasSubmitted',
     args: [address!],
-    query: { enabled: !!address && isValidator === true && screen === 'checking' },
+    query: { enabled: !!address && isValidator === true },
   })
 
   useEffect(() => {
+    if (!address) return
     if (screen !== 'checking') return
     if (isValidator === undefined) return
     if (isValidator === false) { setScreen('not-eligible'); return }
     if (alreadySubmitted === undefined) return
     setScreen(alreadySubmitted ? 'already-submitted' : 'form')
-  }, [isValidator, alreadySubmitted, screen])
+  }, [address, isValidator, alreadySubmitted, screen])
 
   const { writeContractAsync, isPending } = useWriteContract()
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash ?? undefined })
