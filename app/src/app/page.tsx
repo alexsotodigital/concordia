@@ -185,7 +185,7 @@ export default function Home() {
               <div style={{ marginTop: 10, marginBottom: 20 }}><MonadBadge /></div>
 
               {/* Tagline */}
-              <p style={{ fontSize: 20, fontWeight: 700, color: '#111', textAlign: 'center', lineHeight: 1.4, margin: '0 8px 8px' }}>
+              <p style={{ fontSize: 16, fontWeight: 700, color: '#111', textAlign: 'center', lineHeight: 1.4, margin: '0 8px 8px' }}>
                 Proyectos confiables,<br />validados por quienes estuvieron ahí.
               </p>
 
@@ -196,7 +196,7 @@ export default function Home() {
 
               {/* CTA */}
               <button style={{ ...s.cta, marginBottom: 10 }} onClick={() => setScreen('connect')}>
-                Entrar al evento
+                Evaluar evento
               </button>
               <p style={{ fontSize: 12, color: '#999', marginBottom: 28 }}>
                 Solo validadores seleccionados pueden participar
