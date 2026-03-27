@@ -122,6 +122,13 @@ export default function Home() {
     setScreen(alreadySubmitted ? 'already-submitted' : 'form')
   }, [address, isValidator, alreadySubmitted, screen])
 
+  // Fallback: if stuck checking for more than 5s, go back to connect
+  useEffect(() => {
+    if (screen !== 'checking') return
+    const timer = setTimeout(() => setScreen('connect'), 5000)
+    return () => clearTimeout(timer)
+  }, [screen])
+
   const { writeContractAsync, isPending } = useWriteContract()
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash ?? undefined })
 
@@ -249,6 +256,11 @@ export default function Home() {
                   Los validadores son seleccionados por los organizadores antes del evento. Solo ellos pueden enviar una señal onchain.
                 </p>
               </div>
+              <div style={{ width: '100%', backgroundColor: '#FFFBEA', borderRadius: 14, padding: '12px 16px', marginTop: 8, border: '1px solid #F0E060' }}>
+                <p style={{ fontSize: 12, color: '#888', margin: 0, lineHeight: 1.6 }}>
+                  💡 Si quieres cambiar de wallet, primero cambia la cuenta activa en Rabby o MetaMask, luego conecta aquí.
+                </p>
+              </div>
             </div>
 
             <button style={{ ...s.cta, marginBottom: 8 }} onClick={handleConnect}>
@@ -259,7 +271,11 @@ export default function Home() {
 
         {/* ── CHECKING ────────────────────────────────────────────── */}
         {screen === 'checking' && (
-          <div style={{ ...s.content, justifyContent: 'center' }}>
+          <div style={{ ...s.content, justifyContent: 'center', position: 'relative' }}>
+            <button
+              style={{ ...s.disconnectBtn, position: 'absolute', top: 20, right: 20 }}
+              onClick={handleDisconnect}
+            >✕</button>
             <div style={{ fontSize: 40, marginBottom: 16 }}>⏳</div>
             <p style={s.subtitle}>Verificando elegibilidad...</p>
             <p style={{ color: '#bbb', fontSize: 12, marginTop: 8, fontFamily: 'monospace' }}>{shortAddr}</p>
