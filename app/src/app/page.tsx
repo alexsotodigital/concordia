@@ -186,12 +186,12 @@ export default function Home() {
 
               {/* Tagline */}
               <p style={{ fontSize: 20, fontWeight: 700, color: '#111', textAlign: 'center', lineHeight: 1.4, margin: '0 8px 8px' }}>
-                No confíes en el reporte.<br />Confía en quienes estuvieron ahí.
+                Proyectos confiables,<br />validados por quienes estuvieron ahí.
               </p>
 
               {/* Description */}
               <p style={{ color: '#555', fontSize: 14, textAlign: 'center', lineHeight: 1.7, maxWidth: 280, marginBottom: 20 }}>
-                Concordia convierte la experiencia de los participantes en una señal verificable para funders.
+                Concordia convierte tu experiencia en una señal verificable por los funders.
               </p>
 
               {/* CTA */}
