@@ -24,6 +24,65 @@ const SCORE_COLORS = ['#EAC9F8', '#7ED6D1', '#968CFF']
 
 type Screen = 'landing' | 'connect' | 'checking' | 'form' | 'not-eligible' | 'already-submitted' | 'confirmed'
 
+// Decorative signal dots — "many sources → one concordia"
+const DOTS = [
+  { top: '6%',  left: '8%',  size: 14, color: '#968CFF', opacity: 0.7 },
+  { top: '10%', left: '72%', size: 9,  color: '#7ED6D1', opacity: 0.6 },
+  { top: '18%', left: '88%', size: 18, color: '#EAC9F8', opacity: 0.5 },
+  { top: '3%',  left: '45%', size: 7,  color: '#6C3BFF', opacity: 0.4 },
+  { top: '28%', left: '5%',  size: 11, color: '#7ED6D1', opacity: 0.55 },
+  { top: '32%', left: '92%', size: 8,  color: '#968CFF', opacity: 0.5 },
+  { top: '15%', left: '28%', size: 5,  color: '#EAC9F8', opacity: 0.6 },
+  { top: '22%', left: '60%', size: 6,  color: '#6C3BFF', opacity: 0.45 },
+  { top: '8%',  left: '55%', size: 10, color: '#7ED6D1', opacity: 0.4 },
+]
+
+function SignalDots() {
+  return (
+    <>
+      {DOTS.map((d, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            top: d.top,
+            left: d.left,
+            width: d.size,
+            height: d.size,
+            borderRadius: '50%',
+            backgroundColor: d.color,
+            opacity: d.opacity,
+            pointerEvents: 'none',
+          }}
+        />
+      ))}
+    </>
+  )
+}
+
+function MonadBadge() {
+  return (
+    <div style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: '#F0EDFF',
+      border: '1.5px solid #C8BBFF',
+      borderRadius: 24,
+      padding: '5px 12px',
+      marginBottom: 4,
+    }}>
+      {/* Monad diamond */}
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1L13 7L7 13L1 7Z" fill="#6C3BFF"/>
+      </svg>
+      <span style={{ fontSize: 12, fontWeight: 700, color: '#6C3BFF', letterSpacing: 0.5 }}>
+        Monad Blitz CDMX
+      </span>
+    </div>
+  )
+}
+
 export default function Home() {
   const { address, isConnected } = useAccount()
   const { connect, connectors } = useConnect()
@@ -57,9 +116,7 @@ export default function Home() {
   }, [isValidator, alreadySubmitted, screen])
 
   const { writeContractAsync, isPending } = useWriteContract()
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
-    hash: txHash ?? undefined,
-  })
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash ?? undefined })
 
   const allSelected = scores.every((s) => s !== null)
 
@@ -79,9 +136,7 @@ export default function Home() {
       })
       setTxHash(hash)
       setScreen('confirmed')
-    } catch (e) {
-      console.error(e)
-    }
+    } catch (e) { console.error(e) }
   }
 
   function handleDisconnect() {
@@ -94,93 +149,141 @@ export default function Home() {
   const shortAddr = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ''
 
   return (
-    <div style={styles.root}>
-      <div style={styles.phone}>
+    <div style={s.root}>
+      <div style={s.phone}>
 
+        {/* ── LANDING ─────────────────────────────────────────────── */}
         {screen === 'landing' && (
-          <div style={styles.content}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>🏛️</div>
-            <h1 style={styles.title}>Concordia</h1>
-            <p style={styles.subtitle}>Validación colectiva</p>
-            <div style={styles.eventCard}>
-              <p style={styles.eventLabel}>EVENTO</p>
-              <p style={styles.eventName}>Monad Blitz CDMX</p>
-              <p style={styles.eventDate}>Marzo 2026</p>
+          <div style={{ ...s.content, position: 'relative', overflow: 'hidden' }}>
+            <SignalDots />
+            <div style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flex: 1 }}>
+              <div style={{ height: 24 }} />
+              {/* Wordmark */}
+              <h1 style={s.wordmark}>Concordia</h1>
+              <p style={{ ...s.subtitle, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#999', marginBottom: 8 }}>
+                Validación colectiva
+              </p>
+
+              {/* Monad badge */}
+              <MonadBadge />
+
+              {/* Signal line decoration */}
+              <div style={{ display: 'flex', gap: 4, alignItems: 'center', margin: '12px 0' }}>
+                {[...Array(9)].map((_, i) => (
+                  <div key={i} style={{
+                    width: i === 4 ? 24 : 6,
+                    height: 3,
+                    borderRadius: 2,
+                    backgroundColor: i === 4 ? '#6C3BFF' : '#D0C8FF',
+                    opacity: i === 4 ? 1 : 0.6,
+                  }} />
+                ))}
+              </div>
+
+              <p style={{ color: '#555', fontSize: 14, textAlign: 'center', lineHeight: 1.6, maxWidth: 280 }}>
+                Tu opinión sobre este evento quedará registrada para siempre en Monad. Sin intermediarios.
+              </p>
+
+              <div style={{ flex: 1 }} />
+
+              <button style={s.cta} onClick={() => setScreen('connect')}>
+                Entrar al evento
+              </button>
+              <p style={s.poweredBy}>Powered by Monad Testnet · Chain 10143</p>
             </div>
-            <p style={{ color: '#555', fontSize: 14, textAlign: 'center', lineHeight: 1.5, marginBottom: 24 }}>
-              Si fuiste seleccionado como validador, tu opinión quedará registrada para siempre en Monad.
-            </p>
-            <button style={styles.cta} onClick={() => setScreen('connect')}>
-              Entrar al evento
-            </button>
-            <p style={styles.poweredBy}>Powered by Monad Testnet</p>
           </div>
         )}
 
+        {/* ── CONNECT ─────────────────────────────────────────────── */}
         {screen === 'connect' && (
-          <div style={styles.content}>
-            <button style={styles.backBtn} onClick={() => setScreen('landing')}>← Volver</button>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>🔐</div>
-            <h1 style={styles.title}>Conecta tu wallet</h1>
-            <p style={styles.subtitle}>Verificaremos si fuiste seleccionado como validador</p>
-            <button style={{ ...styles.cta, marginTop: 32 }} onClick={handleConnect}>
+          <div style={s.content}>
+            <button style={s.backBtn} onClick={() => setScreen('landing')}>← Volver</button>
+            <div style={{ fontSize: 52, marginBottom: 8 }}>🔐</div>
+            <h2 style={s.screenTitle}>Conecta tu wallet</h2>
+            <p style={s.subtitle}>Verificaremos si fuiste seleccionado como validador en esta ronda.</p>
+            <div style={{ flex: 1 }} />
+            <button style={{ ...s.cta, marginBottom: 8 }} onClick={handleConnect}>
               Conectar wallet
             </button>
           </div>
         )}
 
+        {/* ── CHECKING ────────────────────────────────────────────── */}
         {screen === 'checking' && (
-          <div style={{ ...styles.content, justifyContent: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 16 }}>⏳</div>
-            <p style={styles.subtitle}>Verificando elegibilidad...</p>
-            <p style={{ color: '#999', fontSize: 12, marginTop: 8 }}>{shortAddr}</p>
+          <div style={{ ...s.content, justifyContent: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>⏳</div>
+            <p style={s.subtitle}>Verificando elegibilidad...</p>
+            <p style={{ color: '#bbb', fontSize: 12, marginTop: 8, fontFamily: 'monospace' }}>{shortAddr}</p>
           </div>
         )}
 
+        {/* ── NOT ELIGIBLE ────────────────────────────────────────── */}
         {screen === 'not-eligible' && (
-          <div style={styles.content}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>🔒</div>
-            <h1 style={styles.title}>No seleccionado</h1>
-            <p style={styles.subtitle}>Esta wallet no fue seleccionada como validadora en esta ronda.</p>
-            <p style={{ color: '#999', fontSize: 12, marginTop: 8 }}>{shortAddr}</p>
-            <button style={styles.secondaryBtn} onClick={handleDisconnect}>Usar otra wallet</button>
-          </div>
-        )}
-
-        {screen === 'already-submitted' && (
-          <div style={styles.content}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>✅</div>
-            <h1 style={styles.title}>Ya validaste</h1>
-            <p style={styles.subtitle}>Tu señal ya está registrada onchain. Gracias por participar.</p>
-            <p style={{ color: '#999', fontSize: 12, marginTop: 8 }}>{shortAddr}</p>
-            <button style={styles.secondaryBtn} onClick={handleDisconnect}>Salir</button>
-          </div>
-        )}
-
-        {screen === 'form' && (
-          <div style={{ ...styles.content, paddingTop: 16 }}>
-            <div style={styles.formHeader}>
-              <div>
-                <p style={{ fontSize: 11, color: '#999', margin: 0 }}>MONAD BLITZ CDMX</p>
-                <h1 style={{ ...styles.title, fontSize: 20 }}>¿Merecería financiamiento otra vez?</h1>
-              </div>
-              <button style={styles.disconnectBtn} onClick={handleDisconnect}>✕</button>
+          <div style={s.content}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+              <div style={{ fontSize: 64 }}>🤷</div>
+              <h2 style={s.screenTitle}>No seleccionado</h2>
+              <p style={{ ...s.subtitle, maxWidth: 260 }}>
+                Esta wallet no fue incluida como validadora en esta ronda.
+              </p>
+              <p style={{ color: '#bbb', fontSize: 12, fontFamily: 'monospace' }}>{shortAddr}</p>
             </div>
-            <div style={{ width: '100%', marginTop: 16 }}>
+            <button style={s.secondaryBtn} onClick={handleDisconnect}>
+              Usar otra wallet
+            </button>
+          </div>
+        )}
+
+        {/* ── ALREADY SUBMITTED ───────────────────────────────────── */}
+        {screen === 'already-submitted' && (
+          <div style={s.content}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+              <div style={{ fontSize: 64 }}>✅</div>
+              <h2 style={s.screenTitle}>Ya validaste</h2>
+              <p style={{ ...s.subtitle, maxWidth: 260 }}>
+                Tu señal ya está registrada onchain. Gracias por participar.
+              </p>
+              <p style={{ color: '#bbb', fontSize: 12, fontFamily: 'monospace' }}>{shortAddr}</p>
+            </div>
+            <button style={s.secondaryBtn} onClick={handleDisconnect}>Salir</button>
+          </div>
+        )}
+
+        {/* ── FORM ────────────────────────────────────────────────── */}
+        {screen === 'form' && (
+          <div style={{ ...s.content, paddingTop: 20 }}>
+            <div style={s.formHeader}>
+              <div>
+                <MonadBadge />
+                <h2 style={{ ...s.screenTitle, marginTop: 10, fontSize: 18, lineHeight: 1.3 }}>
+                  ¿Merecería financiamiento otra vez?
+                </h2>
+              </div>
+              <button style={s.disconnectBtn} onClick={handleDisconnect}>✕</button>
+            </div>
+
+            <div style={{ width: '100%', marginTop: 20, paddingBottom: 8 }}>
               {CRITERIA.map((criterion, i) => (
-                <div key={i} style={styles.criterionBlock}>
-                  <p style={styles.criterionLabel}>{criterion}</p>
-                  <div style={styles.btnGroup}>
+                <div key={i} style={{ marginBottom: 20, paddingLeft: 4, paddingRight: 4 }}>
+                  <p style={s.criterionLabel}>{criterion}</p>
+                  <div style={{ display: 'flex', gap: 8, paddingLeft: 4, paddingRight: 4 }}>
                     {SCORE_LABELS.map((label, score) => {
                       const selected = scores[i] === score
                       return (
                         <button
                           key={score}
                           style={{
-                            ...styles.scoreBtn,
-                            backgroundColor: selected ? SCORE_COLORS[score] : '#F5F5F5',
-                            borderColor: selected ? SCORE_COLORS[score] : '#E0E0E0',
+                            flex: 1,
+                            padding: '11px 0',
+                            borderRadius: 12,
+                            border: `2px solid ${selected ? SCORE_COLORS[score] : '#E8E8E8'}`,
+                            backgroundColor: selected ? SCORE_COLORS[score] : '#FAFAFA',
+                            fontSize: 12,
                             fontWeight: selected ? 700 : 400,
+                            fontFamily: "'Signika', sans-serif",
+                            cursor: 'pointer',
+                            transition: 'all 0.15s',
+                            color: '#222',
                           }}
                           onClick={() => {
                             const next = [...scores]
@@ -196,35 +299,52 @@ export default function Home() {
                 </div>
               ))}
             </div>
+
             <button
-              style={{ ...styles.cta, opacity: allSelected && !isPending && !isConfirming ? 1 : 0.45, cursor: allSelected ? 'pointer' : 'not-allowed' }}
+              style={{ ...s.cta, opacity: allSelected && !isPending && !isConfirming ? 1 : 0.4, cursor: allSelected ? 'pointer' : 'not-allowed' }}
               disabled={!allSelected || isPending || isConfirming}
               onClick={handleSubmit}
             >
               {isPending || isConfirming ? 'Enviando...' : 'Enviar validación'}
             </button>
-            <p style={{ color: '#999', fontSize: 11, marginTop: 8 }}>{shortAddr} · Monad Testnet</p>
+            <p style={{ color: '#bbb', fontSize: 11, marginTop: 8, fontFamily: 'monospace' }}>{shortAddr}</p>
           </div>
         )}
 
+        {/* ── CONFIRMED ───────────────────────────────────────────── */}
         {screen === 'confirmed' && txHash && (
-          <div style={styles.content}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>✅</div>
-            <h1 style={styles.title}>Tu señal fue registrada</h1>
-            <p style={styles.subtitle}>Formas parte del veredicto colectivo.</p>
-            <div style={styles.infoBox}>
-              <p style={styles.infoRow}><span style={styles.label}>Wallet</span>{shortAddr}</p>
-              <p style={styles.infoRow}><span style={styles.label}>Hora</span>{new Date().toLocaleString('es-MX')}</p>
-              <p style={styles.infoRow}>
-                <span style={styles.label}>Tx</span>
-                <a href={`https://testnet.monadscan.com/tx/${txHash}`} target="_blank" rel="noopener noreferrer"
-                  style={{ color: '#6C3BFF', textDecoration: 'none', wordBreak: 'break-all', fontSize: 12 }}>
-                  {txHash.slice(0, 10)}...{txHash.slice(-6)} ↗
-                </a>
-              </p>
+          <div style={s.content}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, paddingTop: 16 }}>
+              <div style={{ fontSize: 72 }}>🎉</div>
+              <h2 style={s.screenTitle}>Tu señal fue registrada</h2>
+              <p style={{ ...s.subtitle, maxWidth: 260 }}>Formas parte del veredicto colectivo.</p>
+
+              <div style={s.infoBox}>
+                <div style={s.infoRow}>
+                  <span style={s.infoLabel}>Wallet</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: 13 }}>{shortAddr}</span>
+                </div>
+                <div style={s.infoRow}>
+                  <span style={s.infoLabel}>Hora</span>
+                  <span style={{ fontSize: 13 }}>{new Date().toLocaleString('es-MX')}</span>
+                </div>
+                <div style={s.infoRow}>
+                  <span style={s.infoLabel}>Tx</span>
+                  <a
+                    href={`https://testnet.monadscan.com/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#6C3BFF', textDecoration: 'none', fontFamily: 'monospace', fontSize: 12, wordBreak: 'break-all' }}
+                  >
+                    {txHash.slice(0, 10)}...{txHash.slice(-6)} ↗
+                  </a>
+                </div>
+              </div>
+
+              <div style={s.merch}>🎁 Muestra esta pantalla para recoger merch</div>
             </div>
-            <div style={styles.merch}>🎁 Muestra esta pantalla para recoger merch</div>
-            <button style={styles.secondaryBtn} onClick={handleDisconnect}>Salir</button>
+
+            <button style={s.secondaryBtn} onClick={handleDisconnect}>Salir</button>
           </div>
         )}
 
@@ -233,28 +353,157 @@ export default function Home() {
   )
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  root: { minHeight: '100vh', backgroundColor: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px', fontFamily: 'system-ui, sans-serif' },
-  phone: { width: '100%', maxWidth: 390, minHeight: 700, backgroundColor: '#FFF', borderRadius: 40, boxShadow: '0 0 0 8px #222, 0 0 0 10px #333, 0 32px 64px rgba(0,0,0,0.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' },
-  content: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 24px 24px', gap: 8, overflowY: 'auto' },
-  title: { fontSize: 26, fontWeight: 700, color: '#111', margin: 0, textAlign: 'center' },
-  subtitle: { fontSize: 14, color: '#555', margin: '4px 0 0', textAlign: 'center', lineHeight: 1.5 },
-  eventCard: { width: '100%', backgroundColor: '#F5F0FF', borderRadius: 16, padding: '16px', margin: '16px 0', textAlign: 'center' },
-  eventLabel: { fontSize: 11, color: '#6C3BFF', fontWeight: 700, letterSpacing: 1, margin: 0 },
-  eventName: { fontSize: 18, fontWeight: 700, color: '#111', margin: '4px 0 0' },
-  eventDate: { fontSize: 13, color: '#888', margin: '2px 0 0' },
-  cta: { width: '100%', padding: '16px', backgroundColor: '#6C3BFF', color: '#fff', border: 'none', borderRadius: 14, fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 8 },
-  secondaryBtn: { width: '100%', padding: '14px', backgroundColor: 'transparent', color: '#6C3BFF', border: '2px solid #6C3BFF', borderRadius: 14, fontSize: 15, fontWeight: 600, cursor: 'pointer', marginTop: 16 },
-  backBtn: { alignSelf: 'flex-start', background: 'none', border: 'none', color: '#6C3BFF', fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: 0, marginBottom: 16 },
-  disconnectBtn: { background: 'none', border: 'none', color: '#999', fontSize: 18, cursor: 'pointer', padding: 4, flexShrink: 0 },
-  formHeader: { width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
-  criterionBlock: { width: '100%', marginBottom: 16 },
-  criterionLabel: { fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 8 },
-  btnGroup: { display: 'flex', gap: 8 },
-  scoreBtn: { flex: 1, padding: '10px 0', borderRadius: 12, border: '2px solid', fontSize: 12, cursor: 'pointer', transition: 'all 0.15s' },
-  infoBox: { width: '100%', backgroundColor: '#F9F9FF', borderRadius: 12, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 },
-  infoRow: { fontSize: 13, color: '#111', margin: 0, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' },
-  label: { fontWeight: 700, color: '#6C3BFF', minWidth: 48 },
-  merch: { marginTop: 16, padding: '14px 20px', backgroundColor: '#EAC9F8', borderRadius: 12, fontSize: 15, fontWeight: 600, color: '#111', textAlign: 'center', width: '100%' },
-  poweredBy: { fontSize: 11, color: '#bbb', marginTop: 'auto', paddingTop: 24 },
+const s: Record<string, React.CSSProperties> = {
+  root: {
+    minHeight: '100vh',
+    backgroundColor: '#111',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '24px 16px',
+    fontFamily: "'Signika', system-ui, sans-serif",
+  },
+  phone: {
+    width: '100%',
+    maxWidth: 390,
+    minHeight: 700,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 40,
+    boxShadow: '0 0 0 8px #1e1e1e, 0 0 0 10px #2a2a2a, 0 40px 80px rgba(0,0,0,0.7)',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  content: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '28px 28px 28px',
+    overflowY: 'auto',
+  },
+  wordmark: {
+    fontFamily: "'Syne', sans-serif",
+    fontSize: 42,
+    fontWeight: 800,
+    color: '#111',
+    letterSpacing: -1,
+    margin: 0,
+    textAlign: 'center',
+  },
+  screenTitle: {
+    fontFamily: "'Syne', sans-serif",
+    fontSize: 22,
+    fontWeight: 700,
+    color: '#111',
+    margin: 0,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+    margin: '4px 0 0',
+    textAlign: 'center',
+    lineHeight: 1.6,
+    fontFamily: "'Signika', sans-serif",
+  },
+  cta: {
+    width: '100%',
+    padding: '16px',
+    backgroundColor: '#6C3BFF',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 14,
+    fontSize: 16,
+    fontWeight: 700,
+    cursor: 'pointer',
+    fontFamily: "'Signika', sans-serif",
+  },
+  secondaryBtn: {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: 'transparent',
+    color: '#6C3BFF',
+    border: '2px solid #6C3BFF',
+    borderRadius: 14,
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginTop: 12,
+    fontFamily: "'Signika', sans-serif",
+  },
+  backBtn: {
+    alignSelf: 'flex-start',
+    background: 'none',
+    border: 'none',
+    color: '#6C3BFF',
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+    padding: 0,
+    marginBottom: 24,
+    fontFamily: "'Signika', sans-serif",
+  },
+  disconnectBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#bbb',
+    fontSize: 18,
+    cursor: 'pointer',
+    padding: 4,
+    flexShrink: 0,
+    lineHeight: 1,
+  },
+  formHeader: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  criterionLabel: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#222',
+    marginBottom: 10,
+    fontFamily: "'Signika', sans-serif",
+  },
+  infoBox: {
+    width: '100%',
+    backgroundColor: '#F7F5FF',
+    borderRadius: 14,
+    padding: '16px 18px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+  infoRow: {
+    display: 'flex',
+    gap: 10,
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+  },
+  infoLabel: {
+    fontWeight: 700,
+    color: '#6C3BFF',
+    fontSize: 13,
+    minWidth: 44,
+    fontFamily: "'Signika', sans-serif",
+  },
+  merch: {
+    width: '100%',
+    padding: '14px 20px',
+    backgroundColor: '#EAC9F8',
+    borderRadius: 14,
+    fontSize: 15,
+    fontWeight: 600,
+    color: '#111',
+    textAlign: 'center',
+    fontFamily: "'Signika', sans-serif",
+  },
+  poweredBy: {
+    fontSize: 11,
+    color: '#ccc',
+    paddingTop: 16,
+    fontFamily: 'monospace',
+  },
 }
