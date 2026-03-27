@@ -122,6 +122,13 @@ export default function Home() {
     setScreen(alreadySubmitted ? 'already-submitted' : 'form')
   }, [address, isValidator, alreadySubmitted, screen])
 
+  // Auto-advance to checking when wallet connects on connect screen
+  useEffect(() => {
+    if (screen === 'connect' && isConnected && address) {
+      setScreen('checking')
+    }
+  }, [address, isConnected, screen])
+
   // Fallback: if stuck checking for more than 5s, go back to connect
   useEffect(() => {
     if (screen !== 'checking') return
